@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: ${CI_PROJECT_NAME}-${CI_COMMIT_BRANCH}-kustomization
+
+namespace: ${CI_PROJECT_NAME}
+
+namePrefix: ${CI_PROJECT_NAME}-${CI_COMMIT_BRANCH}-
+
+commonLabels:
+  app: ${CI_PROJECT_NAME}-${CI_COMMIT_BRANCH}-redis
+
+commonAnnotations:
+  iiidevops.org/project_name: "${CI_PROJECT_NAME}"
+  iiidevops.org/branch: "${CI_COMMIT_BRANCH}"
+  iiidevops.org/commit_id: "${CI_COMMIT_SHORT_SHA}"
+  iiidevops.org/type: db-server
+
+resources:
+- rabbitmq-deployment.yaml
+- rabbitmq-service.yaml
