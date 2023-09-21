@@ -7,7 +7,7 @@ stages:
 
 include:
   - project: 'iiidevops-templates/ci-template'
-    ref: 'v2.0.0'
+    ref: 'v2.1.1'
     file: 'ci/template.gitlab-ci.yml'
 
 Deploy--Rabbitmq:
@@ -21,7 +21,7 @@ Deploy--Rabbitmq:
   - envsubst < k8s/kustomization.yaml.tmp >  k8s/kustomization.yaml
   - kubectl kustomize k8s/ | kubectl apply -f -
   only:
-    - skip
+    - master
 
 Deploy--Wait Redis :
   stage: deploy
@@ -38,7 +38,7 @@ Deploy--Wait Redis :
   script:
     - deploy-wait.pl
   only:
-    - skip
+    - master
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /.*\(store\)$/
