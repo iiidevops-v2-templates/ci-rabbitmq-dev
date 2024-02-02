@@ -7,13 +7,11 @@ stages:
 
 include:
   - project: 'iiidevops-templates/ci-template'
-    ref: 'v2.4.1'
+    ref: 'v2.5.4'
     file: 'ci/template.gitlab-ci.yml'
 
 Deploy--Rabbitmq:
   stage: deploy
-  image:
-    name: alpine/k8s:1.25.9
   variables:
     iiidevops: deployed-environments
   script:
@@ -23,10 +21,10 @@ Deploy--Rabbitmq:
   only:
     - master
 
-Deploy--Wait Redis :
+Deploy--Wait Rabbitmq :
   stage: deploy
   image:
-    name: iiiorg/iiidevops-cli:0.0.6
+    name: iiiorg/iiidevops-cli:0.0.7
     entrypoint: [ "" ]
   variables:
     iiidevops: deployed-environments
@@ -42,5 +40,3 @@ Deploy--Wait Redis :
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /.*\(store\)$/
-
-
