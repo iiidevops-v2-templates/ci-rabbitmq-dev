@@ -1,31 +1,34 @@
+include:
+- project: iiidevops-templates/ci-template
+  ref: v2.8.0
+  file: ci/template.gitlab-ci.yml
+
 stages:
 - initial
 - scan
 - build
 - deploy
 - test
-include:
-- project: iiidevops-templates/ci-template
-  ref: v2.6.0
-  file: ci/template.gitlab-ci.yml
+
 Deploy--Rabbitmq:
   stage: deploy
+  extends: .deploy-service
   variables:
-    iiidevops: deployed-environments
+    iiidevops: deploy-service
   script:
   - env
   - envsubst < k8s/kustomization.yaml.tmp >  k8s/kustomization.yaml
   - kubectl kustomize k8s/ | kubectl apply -f -
-  only:
-  - master
+
 Deploy--Wait Rabbitmq:
   stage: deploy
+  extends: .deploy-service
   image:
     name: iiiorg/iiidevops-cli:0.0.7
     entrypoint:
     - ''
   variables:
-    iiidevops: deployed-environments
+    iiidevops: deploy-service
     max_wait: 128
     namespace: ${CI_PROJECT_NAME}
     deploy_name: ${CI_PROJECT_NAME}-${CI_COMMIT_BRANCH}-rbmq
@@ -33,8 +36,3 @@ Deploy--Wait Rabbitmq:
   - Deploy--Rabbitmq
   script:
   - deploy-wait.pl
-  only:
-  - master
-  except:
-    variables:
-    - $CI_COMMIT_MESSAGE =~ /.*\(store\)$/
